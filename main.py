@@ -123,28 +123,25 @@ def swap(lv, tuple_v):
 def eval_solution(chemin):
     s = 0
     for v in range(len(chemin)-1):
-        s += chemin[v].Distances[v + 1]
-    s += chemin[0].Distances[len(chemin) - 1]
+        s += chemin[v].get_distance(chemin[v + 1])
+    s += chemin[0].get_distance(chemin[- 1])
     return s
 
 
-def hill_climbing_1(best_chemin, best_distance, prof_max, n):
-    liste_meilleurs_chemin = [(best_distance, best_chemin)] * n
-    for tuple_swap in generate_random_tuple(n*n, 0, len(best_chemin)-1):
+def hill_climbing_1(best_chemin, best_distance, n, crit_a):
+    it_crita = 0
+    for tu_s in range(n):
+        tuple_swap = generate_random_tuple(1, 0, len(best_chemin)-1)[0]
         lv = swap(best_chemin, tuple_swap)
         distance = eval_solution(lv)
-        if distance <= liste_meilleurs_chemin[0][0]:
-            liste_meilleurs_chemin.pop(0)
-            liste_meilleurs_chemin.append((distance, lv))
-            liste_meilleurs_chemin = sorted(liste_meilleurs_chemin, key=lambda a: a[0])
-
-    if prof_max > 0:
-        for ii in range(n):
-            liste_meilleurs_chemin[ii] = hill_climbing_1(liste_meilleurs_chemin[ii][1],
-                                                         liste_meilleurs_chemin[ii][0],
-                                                         prof_max - 1, n)
-
-    best_distance, best_chemin = min(liste_meilleurs_chemin, key=lambda a: a[0])
+        if distance < best_distance:
+            best_chemin, best_distance = lv, distance
+            it_crita = 0
+        else:
+            it_crita += 1
+            if it_crita >= crit_a:
+                # print("plus d'amélioration")
+                break
     return best_chemin, best_distance
 
 
@@ -187,6 +184,11 @@ if __name__ == '__main__':
     for j in liste_villes:
         j.calc_moyenne()
 
-    min_solution, min_chemin = heuristique6(liste_villes, 0, 8)
-    print(hill_climbing_1(min_chemin, min_solution, 100, 3))
+    solution = [liste_villes[v-1] for v in (1,4,13,7,8,6,17,14,15,3,11,10,2,5,9,12,16)]
+    ds = eval_solution(solution)
+    print("soluce: ", ds)
+    # min_solution, min_chemin = heuristique6(liste_villes, 0, 8)
+    min_solution, min_chemin = heuristique6(liste_villes, 6, 2)
+    c, d = min([hill_climbing_1(min_chemin, min_solution, 100000000, 10) for _ in range(100000)], key=lambda a: a[1])
+    print([str(i) for i in c], d, sep = '\n')
     print("fin")
