@@ -17,8 +17,11 @@ class Ville:
         return sorted(list_ville, key=lambda a: a.Distances[self.value])[:n]
 
     def calc_moyenne(self):
-        self.moyenne = (sum(self.Distances.values())-MAX) / len(self.Distances.values())
-        self.medianne = sorted(self.Distances.values())[len(self.Distances)//4*3]
+        self.moyenne = (sum(self.Distances.values()) - MAX) / len(self.Distances.values())
+        self.medianne = sorted(self.Distances.values())[len(self.Distances) // 4 * 3]
 
     def get_distance(self, ville):
         return self.Distances[ville.value]
+
+    def __str__(self):
+        return str(self.value)

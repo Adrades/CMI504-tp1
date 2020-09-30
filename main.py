@@ -91,8 +91,7 @@ def heuristique6(lv, deb, n_):
         ordre.append(v)
 
     s += ordre[0].get_distance(ordre[-1])
-
-    return s
+    return s, ordre
 
 
 def tests_heuristiques():
@@ -109,21 +108,44 @@ def tests_heuristiques():
 def generate_random_tuple(n, mini, maxi):
     lt = list()
     for i in range(n):
-        while temp_tuple := (randint(mini, maxi), randint(mini, maxi)):
-            lt.append(temp_tuple)
+        while (temp_tuple := (randint(mini, maxi), randint(mini, maxi))) in lt and temp_tuple[0]!=temp_tuple[1]:
+            pass
+        lt.append(temp_tuple)
     return lt
 
 
 def swap(lv, tuple_v):
     lv = lv[:]
-    lv[tuple_v[0]], lv[tuple_v[1]] = lv[tuple_v[0]], lv[tuple_v[1]]
+    lv[tuple_v[0]], lv[tuple_v[1]] = lv[tuple_v[1]], lv[tuple_v[0]]
     return lv
 
 
-def hill_climbing_1(list_villes, prof_max, n):
-    for tuple_swap in generate_random_tuple(n, 0, len(list_villes)):
-        hill_climbing_1(swap(list_villes, tuple_swap), prof_max-1, n)
-    return
+def eval_solution(chemin):
+    s = 0
+    for v in range(len(chemin)-1):
+        s += chemin[v].Distances[v + 1]
+    s += chemin[0].Distances[len(chemin) - 1]
+    return s
+
+
+def hill_climbing_1(best_chemin, best_distance, prof_max, n):
+    liste_meilleurs_chemin = [(best_distance, best_chemin)] * n
+    for tuple_swap in generate_random_tuple(n*n, 0, len(best_chemin)-1):
+        lv = swap(best_chemin, tuple_swap)
+        distance = eval_solution(lv)
+        if distance <= liste_meilleurs_chemin[0][0]:
+            liste_meilleurs_chemin.pop(0)
+            liste_meilleurs_chemin.append((distance, lv))
+            liste_meilleurs_chemin = sorted(liste_meilleurs_chemin, key=lambda a: a[0])
+
+    if prof_max > 0:
+        for ii in range(n):
+            liste_meilleurs_chemin[ii] = hill_climbing_1(liste_meilleurs_chemin[ii][1],
+                                                         liste_meilleurs_chemin[ii][0],
+                                                         prof_max - 1, n)
+
+    best_distance, best_chemin = min(liste_meilleurs_chemin, key=lambda a: a[0])
+    return best_chemin, best_distance
 
 
 if __name__ == '__main__':
@@ -165,4 +187,6 @@ if __name__ == '__main__':
     for j in liste_villes:
         j.calc_moyenne()
 
+    min_solution, min_chemin = heuristique6(liste_villes, 0, 8)
+    print(hill_climbing_1(min_chemin, min_solution, 100, 3))
     print("fin")
