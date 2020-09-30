@@ -1,15 +1,24 @@
 import gaph
+from random import randint
 
 BEST = [2187, 2179, 2229, 2178, 2179, 2413, 2387, 2427, 2415, 2225, 2293, 2340, 2187, 2343, 2276, 2340, 2413]
 
-def best_moyenne(func, lv, args):
+
+def best_moyenne(func: callable, lv: list, args: list) -> list:
+    """
+    Fonction d'automatisation de test d'heuristique
+    :param func: callable heuristique
+    :param lv: liste des Villes
+    :param args: liste des arguments pour func en tuples
+    :return:
+    """
     res = BEST[:]
     for a in args:
-        temp = [func(lv, i, *a) for i in range(len(lv))]
+        temps = [func(lv, vil, *a) for vil in range(len(lv))]
         for b in range(len(lv)):
-            if res[b] > temp[b]:
-                res[b] = temp[b]
-                print(f"les calculs ont trouvés une meilleure solution avec a={a}, b={b}, s={temp[b]}")
+            if res[b] > temps[b]:
+                res[b] = temps[b]
+                print(f"les calculs ont trouvés une meilleure solution avec a={a}, b={b}, s={temps[b]}")
 
     return res
 
@@ -49,6 +58,7 @@ def heuristique2(lv, deb, n_):
 
     return s
 
+
 def heuristique3(lv, deb, n_):
     lv = lv[:]
     v = lv.pop(deb)
@@ -66,6 +76,7 @@ def heuristique3(lv, deb, n_):
 
     return s
 
+
 def heuristique6(lv, deb, n_):
     lv = lv[:]
     v = lv.pop(deb)
@@ -82,6 +93,38 @@ def heuristique6(lv, deb, n_):
     s += ordre[0].get_distance(ordre[-1])
 
     return s
+
+
+def tests_heuristiques():
+    print(best_moyenne(heuristique2, liste_villes, [(ih,) for ih in range(1, 20)]))
+
+    print(best_moyenne(heuristique3, liste_villes, [(ih,) for ih in range(1, 20)]))
+
+    print(best_moyenne(heuristique6, liste_villes, [(ih,) for ih in range(1, 20)]))
+
+    # for i in range(17):
+    #     print(f"{heuristique2(liste_villes, i, 1)}")
+
+
+def generate_random_tuple(n, mini, maxi):
+    lt = list()
+    for i in range(n):
+        while temp_tuple := (randint(mini, maxi), randint(mini, maxi)):
+            lt.append(temp_tuple)
+    return lt
+
+
+def swap(lv, tuple_v):
+    lv = lv[:]
+    lv[tuple_v[0]], lv[tuple_v[1]] = lv[tuple_v[0]], lv[tuple_v[1]]
+    return lv
+
+
+def hill_climbing_1(list_villes, prof_max, n):
+    for tuple_swap in generate_random_tuple(n, 0, len(list_villes)):
+        hill_climbing_1(swap(list_villes, tuple_swap), prof_max-1, n)
+    return
+
 
 if __name__ == '__main__':
     tsp = input("Nom du fichir tsp: ")
@@ -121,14 +164,5 @@ if __name__ == '__main__':
 
     for j in liste_villes:
         j.calc_moyenne()
-
-    print(best_moyenne(heuristique2, liste_villes, [(i,) for i in range(1, 20)]))
-
-    print(best_moyenne(heuristique3, liste_villes, [(i,) for i in range(1, 20)]))
-
-    print(best_moyenne(heuristique6, liste_villes, [(i,) for i in range(1, 20)]))
-
-    # for i in range(17):
-    #     print(f"{heuristique2(liste_villes, i, 1)}")
 
     print("fin")
