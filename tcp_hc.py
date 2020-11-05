@@ -31,7 +31,7 @@ class TcpHc(hillclimbing.HillClimbing):
         return -s
 
     def get_meilleure_solution(self, **kwargs):
-        return -self.evaluate(self.meilleur_solution_trouvee), self.meilleur_solution_trouvee
+        return -self.evaluate(self.meilleur_solution_trouvee), [i.value for i in self.meilleur_solution_trouvee]
 
 if __name__ == '__main__':
     tsp = input("Nom du fichir tsp: ")
