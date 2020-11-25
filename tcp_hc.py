@@ -1,6 +1,6 @@
 import hillclimbing
 from random import randint
-import gaph
+import graph
 
 
 class TcpHc(hillclimbing.HillClimbing):
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # print(liste_chemin)
 
     for i in range(liste_chemin.count(0)):
-        liste_villes.append(gaph.Ville(i))
+        liste_villes.append(graph.Ville(i))
     i = 0
     k = 0
     for j in liste_chemin:

@@ -1,4 +1,4 @@
-import gaph
+import graph
 from random import randint
 
 BEST = [2187, 2179, 2229, 2178, 2179, 2413, 2387, 2427, 2415, 2225, 2293, 2340, 2187, 2343, 2276, 2340, 2413]
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     # print(liste_chemin)
 
     for i in range(liste_chemin.count(0)):
-        liste_villes.append(gaph.Ville(i))
+        liste_villes.append(graph.Ville(i))
     i = 0
     k = 0
     for j in liste_chemin:
